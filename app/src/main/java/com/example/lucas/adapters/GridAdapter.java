@@ -1,0 +1,70 @@
+package com.example.lucas.adapters;
+
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.example.lucas.tasks.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by lkm02 on 3/16/2017.
+ */
+
+public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
+    private List<String> mDataset = new ArrayList<>();
+
+    //Provide a reference to the views for each data item
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView mTextView;
+        public ViewHolder(View v) {
+            super(v);
+            mTextView = (TextView) v.findViewById(R.id.card_txtView);
+        }
+    }
+
+    //Constructor
+    public GridAdapter(List<String> currentItems){
+        Log.e("mDataset", (mDataset.size()) + "");
+        mDataset = currentItems;
+    }
+
+    //Create new views (invoked by the layout Manager)
+    @Override
+    public GridAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        //create new view
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.card_txt_view, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    //Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        // get element from your dataset at this position
+        //replace the contents of the view with that element
+        holder.mTextView.setText(mDataset.get(position));
+    }
+
+    //Return the size of your dataset (invoked by manager)
+    @Override
+    public int getItemCount() {
+        if (mDataset == null) {
+            return 0;
+        }
+        return mDataset.size();
+    }
+
+    //Add another List to the List page
+    public void addList(String data) {
+        mDataset.add(data);
+        notifyDataSetChanged();
+    }
+
+}
