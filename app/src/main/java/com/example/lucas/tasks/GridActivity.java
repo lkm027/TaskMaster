@@ -1,5 +1,9 @@
 package com.example.lucas.tasks;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,16 +18,18 @@ import android.view.MenuItem;
 
 import com.example.lucas.adapters.DividerItemDecoration;
 import com.example.lucas.adapters.GridAdapter;
+import com.example.lucas.fragments.CreateListDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GridActivity extends AppCompatActivity {
+public class GridActivity extends AppCompatActivity implements CreateListDialogFragment.CreateTaskListener {
 
     private RecyclerView mRecyclerView;
     private GridAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     public static List<String> myLists = new ArrayList<>();
+    private DbHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +46,22 @@ public class GridActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                mAdapter.addList("Hello");
+//                mAdapter.addList("Hello");
+//                db.addList("Hello");
+
+                FragmentManager fm = getFragmentManager();
+                DialogFragment dialogFragment = new CreateListDialogFragment();
+                dialogFragment.show(fm, "task");
             }
         });
 
-        //code for recyclerView
-        myLists.add("Test 1");
-        myLists.add("Test 2");
-        myLists.add("Test 3");
-        myLists.add("Test 4");
+        //Obtain our database
+        db = new DbHelper(this.getApplicationContext());
+        //Check if there is anything in our table. If so, obtain our items
+        if (db.getAllLists().size() != 0) {
+            myLists = db.getAllLists();
+        }
+
         mRecyclerView = (RecyclerView) findViewById(R.id.grid_recycler);
 
         //Use a GridLayout Manager
@@ -58,10 +71,18 @@ public class GridActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         //Specify adapter to use
-
         mAdapter = new GridAdapter(myLists);
         mRecyclerView.setAdapter(mAdapter);
 
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        CreateListDialogFragment dialogFragment = (CreateListDialogFragment) dialog;
+        String newList = dialogFragment.getEditTextView();
+        mAdapter.addList(newList);
+        db.addList(newList);
 
     }
 
