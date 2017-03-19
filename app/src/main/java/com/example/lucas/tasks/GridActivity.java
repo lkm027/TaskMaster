@@ -1,10 +1,7 @@
 package com.example.lucas.tasks;
 
-import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.lucas.adapters.DividerItemDecoration;
 import com.example.lucas.adapters.GridAdapter;
@@ -64,6 +62,7 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
 
         mRecyclerView = (RecyclerView) findViewById(R.id.grid_recycler);
 
+
         //Use a GridLayout Manager
         mLayoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -71,10 +70,8 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         //Specify adapter to use
-        mAdapter = new GridAdapter(myLists);
+        mAdapter = new GridAdapter(myLists, GridActivity.this);
         mRecyclerView.setAdapter(mAdapter);
-
-
     }
 
     @Override
@@ -83,7 +80,15 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         String newList = dialogFragment.getEditTextView();
         mAdapter.addList(newList);
         db.addList(newList);
+    }
 
+    public void deleteList(String listName, int position) {
+        mAdapter.deleteList(position);
+        db.deleteList(listName);
+    }
+
+    public void toastIt(String text) {
+        Toast.makeText(getApplicationContext(),"clicked=" + text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

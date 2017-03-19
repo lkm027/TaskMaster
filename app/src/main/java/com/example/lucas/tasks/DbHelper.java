@@ -77,6 +77,12 @@ public class DbHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public boolean deleteList(String text) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(LIST_TABLE, "List = ?", new String[] {text}) > 0;
+//        return db.delete(LIST_TABLE, KEY_LIST_NAME + " = " + text, null) > 0;
+    }
+
 
 
 

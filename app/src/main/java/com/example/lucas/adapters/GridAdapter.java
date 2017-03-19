@@ -1,16 +1,23 @@
 package com.example.lucas.adapters;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.lucas.tasks.GridActivity;
 import com.example.lucas.tasks.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.id;
 
 /**
  * Created by lkm02 on 3/16/2017.
@@ -18,20 +25,37 @@ import java.util.List;
 
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     private List<String> mDataset = new ArrayList<>();
+    private Context mContext;
 
     //Provide a reference to the views for each data item
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mTextView;
+        public View v;
+
         public ViewHolder(View v) {
             super(v);
+            this.v = v;
             mTextView = (TextView) v.findViewById(R.id.card_txtView);
+
+            //set onLongClick listeners for each view
+            v.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //call
+                    ((GridActivity) mContext).
+                            deleteList(mTextView.getText().toString(), getPosition());
+                    return true;
+                }
+
+            });
         }
+
     }
 
     //Constructor
-    public GridAdapter(List<String> currentItems){
-        Log.e("mDataset", (mDataset.size()) + "");
+    public GridAdapter(List<String> currentItems, Context mContext){
         mDataset = currentItems;
+        this.mContext = mContext;
     }
 
     //Create new views (invoked by the layout Manager)
@@ -64,6 +88,12 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     //Add another List to the List page
     public void addList(String data) {
         mDataset.add(data);
+        notifyDataSetChanged();
+    }
+
+    //Delete a list from our list page
+    public void deleteList(int position) {
+        mDataset.remove(position);
         notifyDataSetChanged();
     }
 
