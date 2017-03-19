@@ -1,7 +1,9 @@
 package com.example.lucas.tasks;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -42,11 +44,8 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-//                mAdapter.addList("Hello");
-//                db.addList("Hello");
-
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 FragmentManager fm = getFragmentManager();
                 DialogFragment dialogFragment = new CreateListDialogFragment();
                 dialogFragment.show(fm, "task");
@@ -55,13 +54,13 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
 
         //Obtain our database
         db = new DbHelper(this.getApplicationContext());
+
         //Check if there is anything in our table. If so, obtain our items
         if (db.getAllLists().size() != 0) {
             myLists = db.getAllLists();
         }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.grid_recycler);
-
 
         //Use a GridLayout Manager
         mLayoutManager = new GridLayoutManager(this, 2);
@@ -78,13 +77,26 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
     public void onDialogPositiveClick(DialogFragment dialog) {
         CreateListDialogFragment dialogFragment = (CreateListDialogFragment) dialog;
         String newList = dialogFragment.getEditTextView();
-        mAdapter.addList(newList);
-        db.addList(newList);
+        if (!newList.equals("")) {
+            mAdapter.addList(newList);
+            db.addList(newList);
+        }
     }
 
-    public void deleteList(String listName, int position) {
-        mAdapter.deleteList(position);
-        db.deleteList(listName);
+    //Delete a list from our list page
+    public void deleteList(final String listName, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GridActivity.this);
+        builder.setTitle("Delete List: " + listName);
+        builder.setMessage("Are you sure you want to delete this list?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mAdapter.deleteList(position);
+                db.deleteList(listName);
+            }
+        })
+                .setNegativeButton("No", null);
+        builder.create().show();
     }
 
     public void toastIt(String text) {
