@@ -44,8 +44,6 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 FragmentManager fm = getFragmentManager();
                 DialogFragment dialogFragment = new CreateListDialogFragment();
                 dialogFragment.show(fm, "task");
@@ -97,10 +95,6 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         })
                 .setNegativeButton("No", null);
         builder.create().show();
-    }
-
-    public void toastIt(String text) {
-        Toast.makeText(getApplicationContext(),"clicked=" + text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

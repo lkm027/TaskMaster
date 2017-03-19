@@ -2,6 +2,7 @@ package com.example.lucas.adapters;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.example.lucas.tasks.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static android.R.attr.id;
 
@@ -36,6 +38,17 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             super(v);
             this.v = v;
             mTextView = (TextView) v.findViewById(R.id.card_txtView);
+            CardView mCardView = (CardView) v.findViewById(R.id.adapter_card_view);
+            Random random = new Random();
+//            double randomValue = Math.ceil(random.nextDouble() * 3);
+//            switch ((int) randomValue){
+//                case 1: mCardView.setBackgroundResource(R.color.red100);
+//                    break;
+//                case 2: mCardView.setBackgroundResource(R.color.green100);
+//                    break;
+//                case 3: mCardView.setBackgroundResource(R.color.blue100);
+//            }
+//            mCardView.setBackgroundResource(R.color.green100);
 
             //set onLongClick listeners for each view
             v.setOnLongClickListener(new View.OnLongClickListener() {
