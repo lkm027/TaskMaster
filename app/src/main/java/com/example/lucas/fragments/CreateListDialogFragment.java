@@ -37,8 +37,8 @@ public class CreateListDialogFragment extends DialogFragment {
         //Identify editTextView
         mEditTextView = (EditText) view.findViewById(R.id.edit_txt_dialog_task);
 
-        builder.setTitle("Add a new Task:");
-        builder.setMessage("What do you want to do next?")
+        builder.setTitle(R.string.list_dialog_title);
+        builder.setMessage(R.string.list_dialog_message)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -84,8 +84,9 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
     //Delete a list from our list page
     public void deleteList(final String listName, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(GridActivity.this);
-        builder.setTitle("Delete List: " + listName);
-        builder.setMessage("Are you sure you want to delete this list?");
+        String title = GridActivity.this.getString(R.string.delete_list_dialog_title);
+        builder.setTitle(title + " " +  listName);
+        builder.setMessage(R.string.delete_list_dialog_message);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
