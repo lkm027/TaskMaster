@@ -39,12 +39,17 @@ public class DbHelper extends SQLiteOpenHelper {
         String CREATE_LIST_TABLE= "CREATE TABLE " + LIST_TABLE + "(" +
                 KEY_LIST_NAME + " TEXT)";
 
+        String CREATE_TASKS_TABLE = "CREATE TABLE " + TODO_TABLE + "(" +
+                KEY_TASK + " TEXT," + KEY_PARENT + " TEXT)";
+
+        table.execSQL(CREATE_TASKS_TABLE);
         table.execSQL(CREATE_LIST_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase table, int oldVersion, int newVersion) {
         table.execSQL("DROP TABLE IF EXISTS " + LIST_TABLE);
+        table.execSQL("DROP TABLE IF EXISTS " + TODO_TABLE);
         onCreate(table);
     }
 
@@ -57,6 +62,33 @@ public class DbHelper extends SQLiteOpenHelper {
         table.close();
     }
 
+    public void addToDo(String todo, String listName) {
+        SQLiteDatabase table = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_PARENT, listName);
+        values.put(KEY_TASK, todo);
+        table.insert(TODO_TABLE, null, values);
+        table.close();
+    }
+
+    //Retrieve values for a certain list
+    public List<TodoItem> getAllTodos(String listName) {
+        List<TodoItem> list = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TODO_TABLE + " WHERE " + KEY_PARENT + "='" + listName +"'";
+
+        SQLiteDatabase table = this.getWritableDatabase();
+        Cursor cursor = table.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(new TodoItem(cursor.getString(0)));
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
     //Retrieve all lists from table
     public List<String> getAllLists() {
         List<String> list = new ArrayList<>();
@@ -64,7 +96,7 @@ public class DbHelper extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT  * FROM " + LIST_TABLE;
 
-        SQLiteDatabase table = this. getWritableDatabase();
+        SQLiteDatabase table = this.getWritableDatabase();
         Cursor cursor = table.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
@@ -74,6 +106,7 @@ public class DbHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
         return list;
     }
 

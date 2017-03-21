@@ -50,6 +50,14 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 }
 
             });
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((GridActivity) mContext).
+                            continueToList(mTextView.getText().toString());
+                }
+            });
         }
 
     }

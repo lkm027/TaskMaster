@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -96,6 +97,12 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         })
                 .setNegativeButton("No", null);
         builder.create().show();
+    }
+
+    public void continueToList(String listName) {
+        Intent intent = new Intent(this, TodoActivity.class);
+        intent.putExtra("LIST_NAME", listName);
+        startActivity(intent);
     }
 
     @Override
