@@ -123,4 +123,8 @@ public class TodoActivity extends AppCompatActivity implements CreateTaskDialogF
         overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
     }
 
+    public void isCheckedListener(Boolean isChecked, String task) {
+        db.updateCheckValue(task, parent, isChecked);
+    }
+
 }

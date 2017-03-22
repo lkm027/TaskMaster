@@ -9,10 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.lucas.tasks.GridActivity;
 import com.example.lucas.tasks.R;
+import com.example.lucas.tasks.TodoActivity;
 import com.example.lucas.tasks.TodoItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,13 +22,13 @@ import java.util.List;
 
 public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
 
-    private Context mContex;
+    private Context mContext;
     private List<TodoItem> mList;
 
     public ToDoListAdapter(List<TodoItem> mList, Context context) {
         super(context, 0 , mList);
         this.mList = mList;
-        this.mContex = context;
+        this.mContext = context;
     }
 
     @Override
@@ -35,13 +36,20 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
         // Get the data item for this position
         TodoItem item = getItem(position);
         //Check if an existing view is being reused, else inflate the view
-        LayoutInflater inflater = (LayoutInflater) mContex.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.list_item, null);
 
-        TextView mTextview = (TextView) view.findViewById(R.id.list_view_textview);
+        final TextView mTextview = (TextView) view.findViewById(R.id.list_view_textview);
         mTextview.setText(item.getText());
 
-        CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.list_view_checkbox);
+        final CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.list_view_checkbox);
+        mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TodoActivity) mContext).
+                        isCheckedListener(mCheckBox.isChecked(), mTextview.getText().toString());
+            }
+        });
 
         if (item.getChecked()) {
             mCheckBox.setChecked(true);

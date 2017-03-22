@@ -63,14 +63,28 @@ public class DbHelper extends SQLiteOpenHelper {
         table.close();
     }
 
+    // Add a new task to a list
     public void addToDo(String todo, String listName) {
-        SQLiteDatabase table = this.getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_PARENT, listName);
         values.put(KEY_TASK, todo);
         values.put(KEY_CHECKED, "no");
-        table.insert(TODO_TABLE, null, values);
-        table.close();
+        db.insert(TODO_TABLE, null, values);
+        db.close();
+    }
+
+    public void updateCheckValue(String todo, String listName, boolean isChecked) {
+        String checked = "no";
+        if (isChecked) {
+            checked = "checked";
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_PARENT, listName);
+        values.put(KEY_TASK, todo);
+        values.put(KEY_CHECKED, checked);
+        db.update(TODO_TABLE, values, "Task = ? AND Parent = ?", new String[] {todo, listName});
     }
 
     //Retrieve values for a certain list
@@ -102,8 +116,8 @@ public class DbHelper extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT  * FROM " + LIST_TABLE;
 
-        SQLiteDatabase table = this.getWritableDatabase();
-        Cursor cursor = table.rawQuery(selectQuery, null);
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -126,7 +140,6 @@ public class DbHelper extends SQLiteOpenHelper {
     public boolean deleteList(String text) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(LIST_TABLE, "List = ?", new String[] {text}) > 0;
-//        return db.delete(LIST_TABLE, KEY_LIST_NAME + " = " + text, null) > 0;
     }
 
 
