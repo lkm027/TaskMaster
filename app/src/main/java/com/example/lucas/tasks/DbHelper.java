@@ -29,6 +29,7 @@ public class DbHelper extends SQLiteOpenHelper {
     //columns for tasks table
     public static final String KEY_TASK = "Task";
     public static final String KEY_PARENT = "Parent";
+    public static final String KEY_CHECKED = "Checked";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,7 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 KEY_LIST_NAME + " TEXT)";
 
         String CREATE_TASKS_TABLE = "CREATE TABLE " + TODO_TABLE + "(" +
-                KEY_TASK + " TEXT," + KEY_PARENT + " TEXT)";
+                KEY_TASK + " TEXT," + KEY_PARENT + " TEXT," + KEY_CHECKED + " TEXT)";
 
         table.execSQL(CREATE_TASKS_TABLE);
         table.execSQL(CREATE_LIST_TABLE);
@@ -67,6 +68,7 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_PARENT, listName);
         values.put(KEY_TASK, todo);
+        values.put(KEY_CHECKED, "no");
         table.insert(TODO_TABLE, null, values);
         table.close();
     }
@@ -82,7 +84,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                list.add(new TodoItem(cursor.getString(0)));
+                TodoItem item = new TodoItem(cursor.getString(0));
+                if (cursor.getString(2).equals("checked")) {
+                    item.setChecked(true);
+                }
+                list.add(item);
             } while(cursor.moveToNext());
         }
         cursor.close();
@@ -110,6 +116,13 @@ public class DbHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    // Delete task item from a list
+    public boolean deleteTodo(String item, String listName ) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TODO_TABLE, "Task = ? AND Parent = ?", new String[] {item, listName}) > 0;
+    }
+
+    // Delete list from our main screen
     public boolean deleteList(String text) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(LIST_TABLE, "List = ?", new String[] {text}) > 0;

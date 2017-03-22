@@ -56,4 +56,9 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
         mList.add(item);
         notifyDataSetChanged();
     }
+
+    public void remove(int position) {
+        mList.remove(position);
+        notifyDataSetChanged();
+    }
 }
