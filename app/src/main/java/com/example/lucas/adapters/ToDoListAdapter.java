@@ -32,30 +32,33 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.list_item, null);
+        }
         // Get the data item for this position
         TodoItem item = getItem(position);
         //Check if an existing view is being reused, else inflate the view
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.list_item, null);
+//        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.list_item, null);
 
-        final TextView mTextview = (TextView) view.findViewById(R.id.list_view_textview);
+        final TextView mTextview = (TextView) convertView.findViewById(R.id.list_view_textview);
         mTextview.setText(item.getText());
 
-        final CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.list_view_checkbox);
+        final CheckBox mCheckBox = (CheckBox) convertView.findViewById(R.id.list_view_checkbox);
         mCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((TodoActivity) mContext).
                         isCheckedListener(mCheckBox.isChecked(), mTextview.getText().toString());
+                mList.get(position).setChecked(true);
             }
         });
 
-        if (item.getChecked()) {
-            mCheckBox.setChecked(true);
-        }
+        mCheckBox.setChecked(item.getChecked());
 
-        return view;
+        return convertView;
     }
 
     @Override
