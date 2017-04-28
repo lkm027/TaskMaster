@@ -2,6 +2,7 @@ package com.example.lucas.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.example.lucas.tasks.R;
 import com.example.lucas.tasks.TodoActivity;
 import com.example.lucas.tasks.TodoItem;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -24,11 +27,19 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
 
     private Context mContext;
     private List<TodoItem> mList;
+    private CheckListener listener;
 
-    public ToDoListAdapter(List<TodoItem> mList, Context context) {
+    public interface CheckListener {
+        public void checkboxClicked(View view);
+        public void listItemLongClick(View view, int position);
+    }
+
+
+    public ToDoListAdapter(List<TodoItem> mList, Context context, CheckListener listener) {
         super(context, 0 , mList);
         this.mList = mList;
         this.mContext = context;
+        this.listener = listener;
     }
 
     @Override
@@ -39,24 +50,29 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
         }
         // Get the data item for this position
         TodoItem item = getItem(position);
-        //Check if an existing view is being reused, else inflate the view
-//        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.list_item, null);
 
         final TextView mTextview = (TextView) convertView.findViewById(R.id.list_view_textview);
         mTextview.setText(item.getText());
 
         final CheckBox mCheckBox = (CheckBox) convertView.findViewById(R.id.list_view_checkbox);
+
+
+        mCheckBox.setChecked(item.getChecked());
+
         mCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((TodoActivity) mContext).
-                        isCheckedListener(mCheckBox.isChecked(), mTextview.getText().toString());
-                mList.get(position).setChecked(true);
+                listener.checkboxClicked((View) v.getParent());
             }
         });
 
-        mCheckBox.setChecked(item.getChecked());
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                listener.listItemLongClick(v, position);
+                return true;
+            }
+        });
 
         return convertView;
     }
@@ -72,4 +88,12 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
         mList.remove(position);
         notifyDataSetChanged();
     }
+
+    private View.OnClickListener pressed = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TextView view = (TextView) v.findViewById(R.id.list_view_textview);
+            Log.d("text", view.getText().toString());
+        }
+    };
 }

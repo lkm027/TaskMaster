@@ -15,16 +15,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lucas.adapters.DividerItemDecoration;
 import com.example.lucas.adapters.GridAdapter;
 import com.example.lucas.fragments.CreateListDialogFragment;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class GridActivity extends AppCompatActivity implements CreateListDialogFragment.CreateTaskListener {
+public class GridActivity extends AppCompatActivity implements CreateListDialogFragment.CreateTaskListener,
+            GridAdapter.ClickListener {
 
     private RecyclerView mRecyclerView;
     private GridAdapter mAdapter;
@@ -68,22 +72,23 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         //Specify adapter to use
-        mAdapter = new GridAdapter(myLists, GridActivity.this);
+        mAdapter = new GridAdapter(myLists, GridActivity.this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        CreateListDialogFragment dialogFragment = (CreateListDialogFragment) dialog;
-        String newList = dialogFragment.getEditTextView();
-        if (!newList.equals("")) {
-            mAdapter.addList(newList);
-            db.addList(newList);
-        }
+    // Opens list user choose to view
+    public void listItemClick(View view) {
+        TextView textView = (TextView) view.findViewById(R.id.card_txtView);
+        String listName = textView.getText().toString();
+        Intent intent = new Intent(this, TodoActivity.class);
+        intent.putExtra("LIST_NAME", listName);
+        startActivity(intent);
     }
 
-    //Delete a list from our list page
-    public void deleteList(final String listName, final int position) {
+    // Asks the user if they would like to delete their selected list and does so if prompted
+    public void listItemLongClick(View view, final int position) {
+        TextView textView = (TextView) view.findViewById(R.id.card_txtView);
+        final String listName = textView.getText().toString();
         AlertDialog.Builder builder = new AlertDialog.Builder(GridActivity.this);
         String title = GridActivity.this.getString(R.string.delete_list_dialog_title);
         builder.setTitle(title + " " +  listName);
@@ -99,10 +104,15 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         builder.create().show();
     }
 
-    public void continueToList(String listName) {
-        Intent intent = new Intent(this, TodoActivity.class);
-        intent.putExtra("LIST_NAME", listName);
-        startActivity(intent);
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        CreateListDialogFragment dialogFragment = (CreateListDialogFragment) dialog;
+        String newList = dialogFragment.getEditTextView();
+//        newlist = newList.substring(0,1).toUpperCase() + newList.substring()
+        if (!newList.equals("")) {
+            mAdapter.addList(newList);
+            db.addList(newList);
+        }
     }
 
     @Override
@@ -126,4 +136,6 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

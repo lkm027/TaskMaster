@@ -9,6 +9,7 @@
         android:layout_weight="1"
         android:id="@+id/edit_txt_dialog_task"
         android:hint="@string/add_task_dialog_helper"
+        android:inputType="textCapWords"
         />
 
 </LinearLayout>

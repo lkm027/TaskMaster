@@ -11,11 +11,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,7 +28,8 @@ import com.example.lucas.fragments.CreateTaskDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoActivity extends AppCompatActivity implements CreateTaskDialogFragment.CreateTaskListener {
+public class TodoActivity extends AppCompatActivity implements CreateTaskDialogFragment.CreateTaskListener,
+            ToDoListAdapter.CheckListener {
 
     private DbHelper db;
     private ToDoListAdapter mAdapter;
@@ -69,30 +72,31 @@ public class TodoActivity extends AppCompatActivity implements CreateTaskDialogF
 
         // Create adapter
         ListView listView = (ListView) findViewById(R.id.todo_list_listview);
-        mAdapter = new ToDoListAdapter(todoList, TodoActivity.this);
+        mAdapter = new ToDoListAdapter(todoList, TodoActivity.this, this);
         listView.setAdapter(mAdapter);
+    }
 
-        // Set onLongClick listener for each task item in a list
-        final String parentName = parent;
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+    // updates the value of our checkbox in our db
+    public void checkboxClicked(View view) {
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_view_checkbox);
+        TextView textView = (TextView) view.findViewById(R.id.list_view_textview);
+        db.updateCheckValue(textView.getText().toString(), parent, checkBox.isChecked());
+    }
+
+    // On long press - Asks if the user wants to delete an item from their list
+    public void listItemLongClick(View view, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
+        builder.setTitle(R.string.delete_task_dialog_title);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
-                builder.setTitle(R.string.delete_task_dialog_title);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        TodoItem item = mAdapter.getItem(position);
-                        db.deleteTodo(item.getText().toString(), parentName);
-                        mAdapter.remove(position);
-                    }
-                });
-                builder.setNegativeButton("No", null);
-                builder.create().show();
-                return true;
+            public void onClick(DialogInterface dialog, int which) {
+                TodoItem item = mAdapter.getItem(position);
+                db.deleteTodo(item.getText().toString(), parent);
+                mAdapter.remove(position);
             }
         });
-
+        builder.setNegativeButton("No", null);
+        builder.create().show();
     }
 
     // On positive click when adding new task, add it to the adapter and db
@@ -109,7 +113,7 @@ public class TodoActivity extends AppCompatActivity implements CreateTaskDialogF
         }
     }
 
-    // Called when th back button is pressed
+    // Called when the back button is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
@@ -121,10 +125,6 @@ public class TodoActivity extends AppCompatActivity implements CreateTaskDialogF
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
-    }
-
-    public void isCheckedListener(Boolean isChecked, String task) {
-        db.updateCheckValue(task, parent, isChecked);
     }
 
 }

@@ -28,6 +28,12 @@ import static android.R.attr.id;
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     private List<String> mDataset = new ArrayList<>();
     private Context mContext;
+    public ClickListener listener;
+
+    public interface ClickListener {
+        public void listItemClick(View view);
+        public void listItemLongClick(View view, int position);
+    }
 
     //Provide a reference to the views for each data item
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -43,19 +49,17 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             v.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    //call
-                    ((GridActivity) mContext).
-                            deleteList(mTextView.getText().toString(), getPosition());
+                    listener.listItemLongClick(v, getPosition());
                     return true;
                 }
 
             });
 
+
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((GridActivity) mContext).
-                            continueToList(mTextView.getText().toString());
+                    listener.listItemClick(v);
                 }
             });
         }
@@ -63,9 +67,10 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     }
 
     //Constructor
-    public GridAdapter(List<String> currentItems, Context mContext){
+    public GridAdapter(List<String> currentItems, Context mContext, ClickListener listener){
         mDataset = currentItems;
         this.mContext = mContext;
+        this.listener = listener;
     }
 
     //Create new views (invoked by the layout Manager)
