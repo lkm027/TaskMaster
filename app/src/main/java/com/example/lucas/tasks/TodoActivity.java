@@ -12,6 +12,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -113,10 +114,27 @@ public class TodoActivity extends AppCompatActivity implements CreateTaskDialogF
         }
     }
 
-    // Called when the back button is pressed
+    // Called when a button in the toolbar is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        onBackPressed();
+        int id = item.getItemId();
+
+        if (id == R.id.action_delete) {
+            Log.d("Tag", "tag");
+            AlertDialog.Builder dialog = new AlertDialog.Builder(TodoActivity.this);
+            dialog.setTitle("Delete All?");
+            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mAdapter.deleteAllTodos();
+                    db.deleteAllTodos(parent);
+                }
+            });
+            dialog.setNegativeButton("No", null);
+            dialog.create().show();
+        } else {
+            onBackPressed();
+        }
         return super.onOptionsItemSelected(item);
 }
 
@@ -125,6 +143,13 @@ public class TodoActivity extends AppCompatActivity implements CreateTaskDialogF
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_grid, menu);
+        return true;
     }
 
 }

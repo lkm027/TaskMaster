@@ -142,6 +142,21 @@ public class DbHelper extends SQLiteOpenHelper {
         return db.delete(LIST_TABLE, "List = ?", new String[] {text}) > 0;
     }
 
+    //Delete all lists from our app
+    public void deleteAllLists() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TODO_TABLE, null, null);
+        db.delete(LIST_TABLE, null, null);
+        db.close();
+    }
+
+    //Delete all Todos from our current list
+    public void deleteAllTodos(String listName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TODO_TABLE, "Parent = ?", new String[] {listName});
+        db.close();
+    }
+
 
 
 

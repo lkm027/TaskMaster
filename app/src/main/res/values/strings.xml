@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TaskIt</string>
     <string name="action_settings">Settings</string>
+    <string name="action_delete">Delete all</string>
     <string name="list_dialog_title">Create a new List</string>
     <string name="list_dialog_message">What would you like to call your new list?</string>
     <string name="list_dialog_hint">Grocery List</string>

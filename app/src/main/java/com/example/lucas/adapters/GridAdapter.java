@@ -63,7 +63,6 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 }
             });
         }
-
     }
 
     //Constructor
@@ -106,9 +105,15 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    //Delete a list from our list page
+    //Delete a list
     public void deleteList(int position) {
         mDataset.remove(position);
+        notifyDataSetChanged();
+    }
+
+    //Delete all lists
+    public void deleteAllLists() {
+        mDataset.clear();
         notifyDataSetChanged();
     }
 

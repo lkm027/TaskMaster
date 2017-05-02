@@ -96,4 +96,10 @@ public class ToDoListAdapter extends ArrayAdapter<TodoItem> {
             Log.d("text", view.getText().toString());
         }
     };
+
+    //Remove all TodoItems
+    public void deleteAllTodos() {
+        mList.clear();
+        notifyDataSetChanged();
+    }
 }

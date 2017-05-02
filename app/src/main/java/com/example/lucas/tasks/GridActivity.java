@@ -130,10 +130,19 @@ public class GridActivity extends AppCompatActivity implements CreateListDialogF
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_delete) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(GridActivity.this);
+            dialog.setTitle("Delete All?");
+            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mAdapter.deleteAllLists();
+                    db.deleteAllLists();
+                }
+            });
+            dialog.setNegativeButton("No", null);
+            dialog.create().show();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
